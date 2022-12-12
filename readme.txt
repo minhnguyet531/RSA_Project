@@ -1,3 +1,7 @@
+=======>>>>> Đóng gói chương trình <<<<<<=======
+- Sử dụng thư viện pyinstaller để đóng gói  
+- File đã được đóng gói có tên Design.exe trong thư mục dist
+
 1. Mô tả các file
 Common.py => Lưu các hàm dùng chung cho chương trình
 Design.py => Lưu các thiết kế form chương trình
@@ -20,3 +24,4 @@ rsa.PrivateKey.load_pkcs1() => Load khóa bí mật
 rsa.compute_hash(input_mess, hashType) => Hàm băm
 rsa.sign_hash(hash_msg, privkey, hash_method) => Tạo chữ ký
 rsa.verify(message, signature, pubkey) => Xác minh chữ ký
+

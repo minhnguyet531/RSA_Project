@@ -1,6 +1,7 @@
 import rsa
-import Common
 from tkinter import messagebox
+import Common
+
 # import Design
 # Generate a public/private key pair
 # 128/ 256/ 384/ 512/ 1024/ 2048/ 3072/ 4096 / 8192 / 16384
@@ -11,7 +12,7 @@ def create_keys(size):
 
 def save_key(value_key):
     # Save the public key
-    Common.saveFile(value_key.save_pkcs1("PEM"),"wb")
+    Common.saveFile(value_key.save_pkcs1("PEM"),"wb", "*.pem")
     
 def load_public_key(path):
     # Load the public key
