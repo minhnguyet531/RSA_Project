@@ -1,5 +1,5 @@
 =======>>>>> Đóng gói chương trình <<<<<<=======
-- Sử dụng thư viện pyinstaller để đóng gói  
+- Sử dụng thư viện pyinstaller để đóng gói: pyinstaller --onefile -w --icon=logoRSA.ico DesignRSA.py
 - File đã được đóng gói có tên Design.exe trong thư mục dist
 
 1. Mô tả các file
