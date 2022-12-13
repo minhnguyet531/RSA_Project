@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-
+import time
 import GenerateKeys
 import Common
 import hashMess
@@ -10,7 +10,7 @@ import verify
 
 root = Tk()
 root.title('Chữ ký số - RSA Nhóm 1')
-root.geometry("600x500")
+root.geometry("650x550")
 
 tab_control = ttk.Notebook(root)
 tab_control.pack(expand=1, fill='both')
@@ -39,15 +39,19 @@ def combobox_size_changed(event):
 def create_keys():
     global pubkey, privkey
     size = selected_size.get()
+    timeRunStart = time.time()
     pubkey, privkey = GenerateKeys.create_keys(size)
+    timeRunEnd = time.time()
     txtPublicKey.insert(INSERT, pubkey)
     txtPrivateKey.insert(INSERT, privkey)
-
+    timeRun = round(timeRunEnd - timeRunStart, 3)
+    entryTimeRunTab1.insert(INSERT, timeRun)
 
 # =====> Group Khóa (Tab1)
 def retryTab1():
     txtPrivateKey.delete('1.0', END)
     txtPublicKey.delete('1.0', END)
+    entryTimeRunTab1.delete(0, 'end')
 
 LabelFrameKhoa = LabelFrame(tab1, text="Khóa", padx=5, pady=5)
 LabelFrameKhoa.pack( padx= 5, pady = 5)
@@ -77,7 +81,9 @@ Button(LabelFrameKhoa, text="Tạo khóa", command=create_keys).grid(row=6, colu
 
 Button(LabelFrameKhoa, text="Thử lại", command=retryTab1).grid(row=6, column=1, padx=10, pady=10)
 
-Label(LabelFrameKhoa, text="Các khóa được lưu dưới định dạng .pem").grid(row=7,columnspan=2, column=0, padx=10)
+Label(LabelFrameKhoa, text="Thời gian chạy chương trình (s)").grid(row=7, column=0, padx=10)
+entryTimeRunTab1 = Entry(LabelFrameKhoa, width = 10)
+entryTimeRunTab1.grid(row=7, column=1, padx=10, pady=10)
 
 
 # =========> Tạo chữ ký (Người gửi) (tab2)
@@ -85,7 +91,8 @@ Label(LabelFrameKhoa, text="Các khóa được lưu dưới định dạng .pem
 # =====> Functions for tab 2
 def retryTab2():
     entryMessage.delete(0, 'end')
-    entryKhoaBiMat.delete(0, 'end'  )
+    entryKhoaBiMat.delete(0, 'end')
+    entryTimeRunTab2.delete(0, 'end')
     txtMessageHashed.delete('1.0', END)
     txtSignature.delete('1.0', END   )
 
@@ -94,10 +101,14 @@ def create_signature():
     message = entryMessage.get() # Lấy path thông điệp
     khoaBiMat = entryKhoaBiMat.get() # Lấy khóa bí mật
     hashType = Common.ShowChoiceHash(selected_hash) # Lấy giá trị hash
+    timeRunStart = time.time()
     hash_message = hashMess.hash_message(message, hashType) # mã hóa thông điệp
     txtMessageHashed.insert(INSERT, hash_message)
     signature = sign.sign_message( hash_message, khoaBiMat, hashType) # Tạo chữ ký
+    timeRunEnd = time.time()
     txtSignature.insert(INSERT, signature)
+    timeRun = round(timeRunEnd - timeRunStart, 3)
+    entryTimeRunTab2.insert(INSERT, timeRun)
 
 LabelFrameTaoChuKy = LabelFrame(tab2, text="Chữ ký số", padx=5, pady=5)
 LabelFrameTaoChuKy.pack( padx= 5, pady = 5)
@@ -138,18 +149,28 @@ Button(LabelFrameTaoChuKy, text="Tạo chữ ký", command=create_signature).gri
 
 Button(LabelFrameTaoChuKy, text="Lưu chữ ký", command=lambda: Common.saveFile(signature, "wb", "*.sig")).grid(row=7, column=1, padx=10, pady=10)
 Button(LabelFrameTaoChuKy, text="Thử lại", command=retryTab2).grid(row=7, column=2, padx=10, pady=10)
+Label(LabelFrameTaoChuKy, text="Thời gian chạy chương trình (s)").grid(row=8, column=0, padx=10)
+entryTimeRunTab2 = Entry(LabelFrameTaoChuKy, width = 10)
+entryTimeRunTab2.grid(row=8, column=1, padx=10, pady=10)
+
+
 
 # Xác thực chữ ký số (Người nhận) (tab3)
 def retryTab3():
     entryMessageTab3.delete(0, 'end')
     entrySignatureTab3.delete(0, 'end')
     entryPublicKeyTab3.delete(0, 'end')
+    entryTimeRunTab3.delete(0, 'end')
 
 def verify_signature():
     message = entryMessageTab3.get() # Lấy path thông điệp
     signature_path = entrySignatureTab3.get() # Lấy path chữ ký
     public_key = entryPublicKeyTab3.get() # Lấy path khóa công khai
+    timeRunStart = time.time()
     result = verify.verify_signature( message, signature_path, public_key) # xác thực chữ ký
+    timeRunEnd = time.time()
+    timeRun = round(timeRunEnd - timeRunStart, 3)
+    entryTimeRunTab3.insert(INSERT, timeRun)
     if result:
         messagebox.showinfo("Xác thực chữ ký", "Chữ ký hợp lệ")
     else:
@@ -187,6 +208,12 @@ entryPublicKeyTab3.grid(row=3, column=1, padx=10, pady=5)
 Button(LabelFrameXacNhanChuKyGroup1, text="Open File", command=lambda: openFile(entryPublicKeyTab3)).grid(row=3, column=2, padx=10, pady=10)
 
 Button(LabelFrameXacNhanChuKyGroup1, text="Xác minh chữ ký", command=verify_signature).grid(row=4, column=1, padx=10, pady=10)
-Button(LabelFrameXacNhanChuKyGroup1, text="Thử lại", command=retryTab3).grid(row=5, column=1, padx=5, pady=5)
+Button(LabelFrameXacNhanChuKyGroup1, text="Thử lại", command=retryTab3).grid(row=4, column=2, padx=5, pady=5)
+Label(LabelFrameXacNhanChuKyGroup1, text="Thời gian chạy chương trình (s)").grid(row=5, column=1, padx=10)
+entryTimeRunTab3 = Entry(LabelFrameXacNhanChuKyGroup1, width = 10)
+entryTimeRunTab3.grid(row=5, column=2, padx=10, pady=10)
+
+
+
 
 root.mainloop()
